@@ -13,8 +13,10 @@ USER root
 #    gateway alongside the web UI when a Slack token is present.
 RUN chmod u+w /hermeswebui_init.bash \
  && sed -i 's#^cd /app; python server.py#cd /app; if [ -n "${SLACK_BOT_TOKEN:-}" ] || [ "${HERMES_GATEWAY_ENABLED:-}" = "1" ]; then echo "[hermes-webui-plus] starting hermes gateway"; (python -c "from hermes_cli.gateway import run_gateway; run_gateway()" >/tmp/hermes-gateway.log 2>\&1 \&); fi; python server.py#' /hermeswebui_init.bash \
+ && sed -i '1a if [ -d /data ]; then chown -R 1024:1024 /data 2>/dev/null || true; fi' /hermeswebui_init.bash \
  && chmod 555 /hermeswebui_init.bash \
- && grep -q run_gateway /hermeswebui_init.bash
+ && grep -q run_gateway /hermeswebui_init.bash \
+ && grep -q "chown -R 1024:1024 /data" /hermeswebui_init.bash
 
 # 2) Build tools (some agent deps compile on the slim base) + Node.js 22 (the
 #    claude CLI + claude-code-acp are npm packages; the base image is Python-only).
