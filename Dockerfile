@@ -71,7 +71,9 @@ RUN cp -a /apptoo/requirements.txt /app/requirements.txt \
  && uv pip install -r /app/requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org \
  && uv pip install "hermes-agent[all]" --trusted-host pypi.org --trusted-host files.pythonhosted.org \
  && python -c "import hermes_cli, hermes_cli.gateway; print('hermes_cli OK')" \
- && touch /app/venv/.deps_installed
+ && touch /app/venv/.deps_installed \
+ && HOME=/home/hermeswebui /app/venv/bin/hermes config set provider copilot-acp \
+ && HOME=/home/hermeswebui /app/venv/bin/hermes config set model copilot-acp
 
 USER root
 CMD ["/hermeswebui_init.bash"]
